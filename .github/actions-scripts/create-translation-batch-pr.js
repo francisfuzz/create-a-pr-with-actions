@@ -48,7 +48,7 @@ async function createTranslationBatchPullRequest(retryCount) {
     // Create a new pull request with the specified parameters.
     const octokit = github.getOctokit(GITHUB_TOKEN)
     const [org, repo] = GITHUB_REPOSITORY.split('/')
-    const body = await readFile(BODY_FILE, 'utf8')
+    const body = await fs.readFile(BODY_FILE, 'utf8')
     const { data: pullRequest } = await octokit.rest.pulls.create({
       owner: org,
       repo: repo,
