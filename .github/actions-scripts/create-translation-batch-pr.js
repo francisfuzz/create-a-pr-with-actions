@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs/promises')
-const getOctokit = require('@actions/github')
+const github = require('@actions/github')
 
 /**
  * Creates a new pull request labeled with the `translation-batch{-*}` labels.
@@ -46,10 +46,10 @@ async function createTranslationBatchPullRequest(retryCount) {
 
   try {
     // Create a new pull request with the specified parameters.
-    const github = getOctokit(GITHUB_TOKEN)
+    const octokit = github.getOctokit(GITHUB_TOKEN)
     const [org, repo] = GITHUB_REPOSITORY.split('/')
     const body = await readFile(BODY_FILE, 'utf8')
-    const { data: pullRequest } = await github.rest.pulls.create({
+    const { data: pullRequest } = await octokit.rest.pulls.create({
       owner: org,
       repo: repo,
       base: BASE,
@@ -64,7 +64,7 @@ async function createTranslationBatchPullRequest(retryCount) {
     // metadata parameters aren't currently available in `github.rest.pulls.create`,
     // but they are in `github.rest.issues.update`.
     const labels = ['translation-batch', `translation-batch-${LANGUAGE}`]
-    const { data: updatedPullRequest } = await github.rest.issues.update({
+    const { data: updatedPullRequest } = await octokit.rest.issues.update({
       owner: org,
       repo: repo,
       issue_number: pullRequest.number,
