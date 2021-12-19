@@ -45,6 +45,12 @@ async function createTranslationBatchPullRequest(retryCount) {
   }
 
   try {
+    // TEMP: This is a contrived test example to demonstrate the retry logic
+    if (retryCount > 1) {
+      const error = new Error("Fictitious error to test the retry logic")
+      error.status = 502
+      throw error
+    }
     // Create a new pull request with the specified parameters.
     const octokit = github.getOctokit(GITHUB_TOKEN)
     const [org, repo] = GITHUB_REPOSITORY.split('/')
