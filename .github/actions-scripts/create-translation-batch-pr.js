@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { readFile } from 'fs/promises'
-import { getOctokit } from '@actions/github'
+const fs = require('fs/promises')
+const getOctokit = require('@actions/github')
 
 /**
  * Creates a new pull request labeled with the `translation-batch{-*}` labels.
