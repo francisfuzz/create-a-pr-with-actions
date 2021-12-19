@@ -1,0 +1,55 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Create a PR
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set branch name
+        id: set-branch
+        run: |
+          echo "::set-output name=BRANCH_NAME::translation-batch-$(date +%Y-%m-%d__%H-%M)"
+      
+      - name: Checkout to branch
+        run: git checkout -b ${{ steps.set-branch.outputs.BRANCH_NAME }}
+
+      - name: Set Git identity
+        run: |
+          git config --global user.name "github-action"
+          git config --global user.email "actions@github.com"
+
+      - name: Add file and push
+        run: |
+          NOW=$(date +%s)
+          echo $NOW > now.txt
+          git add now.txt
+          git commit -m "feat: add now.txt"
+          git push origin HEAD
+        
+      - name: Create a PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --title "New translation batch" \
+            --base=main \
+            --head=${{ steps.set-branch.outputs.BRANCH_NAME }} \
+            --body="The newness" \
+            --label "translation-batch" \
+            --label "translation-batch-es"
