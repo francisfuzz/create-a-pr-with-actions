@@ -71,9 +71,10 @@ async function createTranslationBatchPullRequest(retryCount) {
       labels: labels,
     })
 
-    console.log(
-      `Updated ${GITHUB_REPOSITORY}#${pullRequest.number} with these labels: ${updatedPullRequest.labels}`
-    )
+    console.log(`
+      Updated ${GITHUB_REPOSITORY}#${pullRequest.number} with these labels:
+      ${updatedPullRequest.labels.map(label => label.name).join(', ')}
+    `)
   } catch (error) {
     // Retry the operation if the API responds with a `502 Bad Gateway` error.
     if (retryCount > 0 && error.status === 502) {
